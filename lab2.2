@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+class Employee
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public double Salary { get; set; }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        List<Employee> employees = new List<Employee>();
+
+        // Читання даних з файлу та заповнення списку співробітників
+        string filePath = "employees.txt";
+        if (File.Exists(filePath))
+        {
+            string[] lines = File.ReadAllLines(filePath);
+            foreach (string line in lines)
+            {
+                string[] fields = line.Split(',');
+                employees.Add(new Employee
+                {
+                    Name = fields[0],
+                    Age = int.Parse(fields[1]),
+                    Salary = double.Parse(fields[2])
+                });
+            }
+        }
+
+        // Сортування співробітників за зарплатою
+        List<Employee> sortedEmployees = employees.OrderByDescending(e => e.Salary).ToList();
+
+        // Виведення результатів на екран
+        Console.WriteLine("Список співробітників, відсортованих за зарплатою:");
+        foreach (Employee employee in sortedEmployees)
+        {
+            Console.WriteLine("{0} (вік: {1}, зарплата: {2})", employee.Name, employee.Age, employee.Salary);
+        }
+    }
+}

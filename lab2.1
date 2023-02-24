@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+class Student
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public double AverageGrade { get; set; }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        List<Student> students = new List<Student>();
+
+        // Читання даних з файлу та заповнення списку студентів
+        string filePath = "students.txt";
+        if (File.Exists(filePath))
+        {
+            string[] lines = File.ReadAllLines(filePath);
+            foreach (string line in lines)
+            {
+                string[] fields = line.Split(',');
+                students.Add(new Student
+                {
+                    Name = fields[0],
+                    Age = int.Parse(fields[1]),
+                    AverageGrade = double.Parse(fields[2])
+                });
+            }
+        }
+
+        // Фільтрація студентів за середнім балом
+        List<Student> filteredStudents = students.Where(s => s.AverageGrade >= 4.0).ToList();
+
+        // Виведення результатів на екран
+        Console.WriteLine("Список студентів з середнім балом 4.0 і вище:");
+        foreach (Student student in filteredStudents)
+        {
+            Console.WriteLine("{0} (вік: {1}, середній бал: {2})", student.Name, student.Age, student.AverageGrade);
+        }
+    }
+}

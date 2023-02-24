@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.SqlClient;
+
+namespace GroupByDemo
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MyDatabase;Integrated Security=True";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM Products";
+
+                SqlCommand command = new SqlCommand(query, connection);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                List<Product> products = new List<Product>();
+
+                while (reader.Read())
+                {
+                    Product product = new Product();
+
+                    product.Id = (int)reader["Id"];
+                    product.Name = (string)reader["Name"];
+                    product.Category = (string)reader["Category"];
+                    product.Price = (decimal)reader["Price"];
+
+                    products.Add(product);
+                }
+
+                reader.Close();
+
+                // Групування продуктів за категорією
+                var productsByCategory = products.GroupBy(p => p.Category);
+
+                Console.WriteLine("Products grouped by category:");
+                foreach (var group in productsByCategory)
+                {
+                    Console.WriteLine(group.Key);
+                    foreach (var product in group)
+                    {
+                        Console.WriteLine("\t{0} ({1:C})", product.Name, product.Price);
+                    }
+                }
+
+                // Групування продуктів за ціною
+                var productsByPrice = products.GroupBy(p => p.Price);
+
+                Console.WriteLine("Products grouped by price:");
+                foreach (var group in productsByPrice)
+                {
+                    Console.WriteLine("{0:C}", group.Key);
+                    foreach (var product in group)
+                    {
+                        Console.WriteLine("\t{0} ({1})", product.Name, product.Category);
+                    }
+                }
+            }
+        }
+    }
+
+    class Product
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public decimal Price { get; set; }
+    }
+}

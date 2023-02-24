@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+
+class Program
+{
+    delegate int StringLength(string s);
+
+    static void Main(string[] args)
+    {
+        List<string> stringList = new List<string>() { "apple", "banana", "cherry", "date", "elderberry" };
+
+        StringLength lengthDelegate = s => s.Length;
+
+        foreach (string str in stringList)
+        {
+            int length = lengthDelegate(str);
+            Console.WriteLine("The length of '{0}' is {1}.", str, length);
+        }
+    }
+}
